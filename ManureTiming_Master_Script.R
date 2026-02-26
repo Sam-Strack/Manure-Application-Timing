@@ -1,6 +1,6 @@
 #This script will process and analyze all of the data from the 2024-2027 Wilson lab Manure Timing experiment
 #Written By: Sam Strack :)
-#Last Updated: 12/26/2025
+#Last Updated: 02/26/2026
 
 #Data processed by this script will be:
   #Inorganic Soil N(ppm)
@@ -14,12 +14,12 @@
 
 #------------------------------------------------------------------------------------#
 #Relevant file Locations
-ManureTiming_Loc <- "G:/Shared drives/ManureLabTeam/ManureResearch_Shared/Experiments/Timing/Data"
+ManureTiming_Loc <- "D:/Shared drives/ManureLabTeam/ManureResearch_Shared/Experiments/Timing/Data"
 
 Analysis_Loc <- paste0(ManureTiming_Loc,"/r_Analysis")
 Raw_Data_Loc <- paste0(ManureTiming_Loc,"/Raw_Data")
 Plots_Loc <- paste0(ManureTiming_Loc,"/r_Plots")
-Scripts_Loc <- paste0(ManureTiming_Loc,"/r_Scripts")
+Scripts_Loc <- paste0(ManureTiming_Loc,"/r_Scripts/Manure-Application-Timing/")
 
 #------------------------------------------------------------------------------------#
 #Data Processing
