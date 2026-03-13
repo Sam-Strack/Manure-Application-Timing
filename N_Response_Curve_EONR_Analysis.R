@@ -2,7 +2,7 @@
 #will focus on performing regression to create an N response curve featuring
 #5 N-Rates(0,50%,75%,100%,150%) from two sites- each under a different cropping system(C-C, SB-C)
 #Written By: Sam Strack :)
-#Last Updated: 02/26/2026
+#Last Updated: 03/12/2026
 
 #N-response curve:
 #https://blogs.cornell.edu/agsci-interns/2015/08/20/the-models-used-to-fit-the-data-of-yield-nitrogen-fertilizer-response/
@@ -83,8 +83,9 @@ ggplot(data = rosemount_yield,
            y = Yield,
            group = 1)) +
        geom_point() +
-       geom_smooth(method = "lm", se = FALSE) +
-       stat_regl
+       geom_smooth(method = "lm", se = FALSE) + #linear regression, standard error
+       stat_regline_equation(label.y = 250) +   #equation of line
+       stat_cor(aes(label = after_stat(rr.label)), label.y = 240) + #R^2
        ggtitle("RROC Yield-N Response Curve Corn-Corn") +
        xlab("N Rate(Pre-Plant Urea)") +
        ylab("Yield Bu/Acre") +
@@ -93,10 +94,13 @@ ggplot(data = rosemount_yield,
 #rosemount silage
 ggplot(data = rosemount_silage,
        aes(x = Trt,
-           y = Silage)) +
+           y = Silage,
+           group = 1)) +
        geom_point() +
+       geom_smooth(method = "lm", se = FALSE) + #linear regression, standard error
+       stat_regline_equation(label.y = 40) +   #equation of line
+       stat_cor(aes(label = after_stat(rr.label)), label.y = 39) + #R^2
        ggtitle("RROC Silage Yield-N Response Curve Corn-Corn") +
        xlab("N Rate(Pre-Plant Urea)") +
        ylab("Silage Yield(65% Moist) Ton/Acre") +
        scale_x_discrete(labels = c("0lbsN","98lbsN","146lbsN","195lbsN","293lbsN"))
-
