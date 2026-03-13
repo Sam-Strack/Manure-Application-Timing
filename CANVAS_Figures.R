@@ -11,7 +11,7 @@ library(ggtext)
 
 Trt_Index <- data.frame(Groups = c("Liquid","Liquid","Liquid","Liquid","Solid","Solid","Solid","Control","Urea","Urea","Urea","Urea"),
                         Groups_RROC = c("Liquid","Control","Liquid","Liquid","Solid","Solid","Solid","Control","Urea","Urea","Urea","Urea"),
-                        Arrange = c(8,11,9,10,1,2,4,3,5,6,7,12),
+                        Arrange = c(8,11,12,9,10,3,1,2,4,7,5,6),
                         Trt_Num = c(1,2,3,4,5,6,7,8,9,10,11,12),
                         Timing = c("Oct","Nov","April","June","Oct","Nov","April","Control","Urea","Urea","Urea","Urea"),
                         Names_RROC = c("Liquid Dairy Early Fall","Liquid Dairy Late Fall","Liquid Dairy Spring","Liquid Dairy Sidedress","Solid Beef Early Fall","Solid Beef Late Fall",
@@ -32,13 +32,6 @@ Avg_Grain_Yield_Treatment_SROC <- Growing_Season_2025$Waseca_R6 %>%
          Group = Trt_Index$Groups,
          Timing = Trt_Index$Timing)
 
-#TEMP FOR CANVAS
-#Avg_Grain_Yield_Treatment_SROC <- Avg_Grain_Yield_Treatment_SROC[c(1,2,4,3,5,6,7,8,12), ]
-
-
-#Error bars, +/- 1 Standard Deviation
-limits <- aes(ymin = Avg_Grain_Yield - StdDev_Grain_Yield,
-              ymax = Avg_Grain_Yield + StdDev_Grain_Yield)
 
 #Plot Avg Grain Yield by Treatment
 Avg_Grain_Yield_Treatment_Plot <- ggplot(Avg_Grain_Yield_Treatment_SROC,
@@ -46,9 +39,8 @@ Avg_Grain_Yield_Treatment_Plot <- ggplot(Avg_Grain_Yield_Treatment_SROC,
                                             x = Trt,
                                             y = Avg_Grain_Yield)) +
                                             geom_col(color = "black") +
-                                            geom_errorbar(limits, width = 0.2) +
                                             scale_fill_manual(values = c("Liquid" = "#ffcc33", "Solid" = "#7a0019", "Control" = "#141414", "Urea" = "#A9A9A9" )) +
-                                            scale_x_discrete(guide = guide_axis(n.dodge = 2)) +
+                                            scale_x_discrete(labels = Trt_Index$Names_SROC, guide = guide_axis(n.dodge = 2)) +
                                             ggtitle("Corn-Soybean Grain Yield by Treatment") +
                                             ylab("Grain Yield(Bu/Acre)") +
                                             xlab("Treatment") +
@@ -56,7 +48,7 @@ Avg_Grain_Yield_Treatment_Plot <- ggplot(Avg_Grain_Yield_Treatment_SROC,
                                             theme(
                                               panel.grid.major.x = element_blank(),
                                               panel.grid.minor.x = element_blank()) +
-                                            theme(axis.text = element_text(size = 14)) +
+                                            theme(axis.text = element_text(size = 10)) +
                                             theme(legend.text = element_text(size = 14)) +
                                             theme(axis.title = element_text(size = 16)) +
                                             theme(plot.title = element_text(size = 18))
@@ -75,13 +67,6 @@ Avg_Grain_Yield_Treatment_RROC <- Growing_Season_2025$Rosemount_R6 %>%
          Group = Trt_Index$Groups_RROC,
          Timing = Trt_Index$Timing)
 
-#TEMP FOR CANVAS
-Avg_Grain_Yield_Treatment_RROC <- Avg_Grain_Yield_Treatment_RROC[c(1,4,3,5,6,7,8,12), ]
-
-#Error bars, +/- 1 Standard Deviation
-limits <- aes(ymin = Avg_Grain_Yield - StdDev_Grain_Yield,
-              ymax = Avg_Grain_Yield + StdDev_Grain_Yield)
-
 #Plot Avg Grain Yield by Treatment
 Avg_Grain_Yield_Treatment_Plot <- ggplot(Avg_Grain_Yield_Treatment_RROC,
                                          aes(fill = Group,
@@ -90,7 +75,7 @@ Avg_Grain_Yield_Treatment_Plot <- ggplot(Avg_Grain_Yield_Treatment_RROC,
                                              geom_col(color = "black") +
                                              geom_errorbar(limits, width = 0.2) +
                                              scale_fill_manual(values = c("Liquid" = "#ffcc33", "Solid" = "#7a0019", "Control" = "#141414", "Urea" = "#A9A9A9" )) +
-                                             scale_x_discrete(guide = guide_axis(n.dodge = 2)) +
+                                             scale_x_discrete(labels = Trt_Index$Names_RROC, guide = guide_axis(n.dodge = 2)) +
                                              ggtitle("Continuous Corn Grain Yield by Treatment") +
                                              ylab("Grain Yield(Bu/Acre)") +
                                              xlab("Treatment") +
