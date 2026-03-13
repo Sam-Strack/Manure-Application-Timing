@@ -12,6 +12,17 @@
   #Watchdog Air Temp/Humidity(degC/%)
   #On-Site Weather Station Data (Several Variables)
 
+#Download necessary packages for all scripts if not already installed
+#install.packages("tidyverse")
+#install.packages("scales")
+#install.packages("ggplot2")
+#install.packages("dplyr")
+#install.packages("ggtext")
+#install.packages("lubridate")
+#install.packages("car")
+#install.packages("EnvStats")
+#install.packages("ggpubr")
+
 #------------------------------------------------------------------------------------#
 #Relevant file Locations
 ManureTiming_Loc <- "D:/Shared drives/ManureLabTeam/ManureResearch_Shared/Experiments/Timing/Data"
@@ -32,7 +43,7 @@ Scripts_Loc <- paste0(ManureTiming_Loc,"/r_Scripts/Manure-Application-Timing/")
 #of values that do not meet measurement thresholds
   source(paste0(Scripts_Loc,"/PRS_Data_Processing.R"))
 
-#Raw data from RAL Plant/Grain Analysis
+#Raw data from Brookside Plant/Grain Analysis
   source(paste0(Scripts_Loc,"/Plant_Grain_Data_Processing.R"))
 
 #Raw Data from Watchdog Datalogger
@@ -54,6 +65,9 @@ Scripts_Loc <- paste0(ManureTiming_Loc,"/r_Scripts/Manure-Application-Timing/")
 
 #Look into stat tests Eduardo used for PRS x Treatment
 
+#N-yield response curve and EONR
+  #https://blogs.cornell.edu/agsci-interns/2015/08/20/the-models-used-to-fit-the-data-of-yield-nitrogen-fertilizer-response/
+
 
 #------------------------------------------------------------------------------------#
 #Plots
@@ -62,7 +76,7 @@ Scripts_Loc <- paste0(ManureTiming_Loc,"/r_Scripts/Manure-Application-Timing/")
 
 #PRS Nutrients across time including Precip
 
-
+#General Plots, Pre Analysis:
 
 
 
