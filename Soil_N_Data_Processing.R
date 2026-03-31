@@ -60,7 +60,7 @@ for (site in 1 : length(sites)) {
 
 }
 
-#add final dataframes to master list for growing season
+#add final tibbles to master list for growing season
 Growing_Season_2025 <- append(Growing_Season_2025, list(`2025 Rosemount Soil N` = `2025 Rosemount Soil N`,
                                                         `2025 Waseca Soil N` = `2025 Waseca Soil N`))
 
