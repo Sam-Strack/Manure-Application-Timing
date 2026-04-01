@@ -4,7 +4,6 @@
   #generate plots for various data sources
   #save plots to shared drive
 
-
 #Plots to make:
   #Yield by treatment
   #cumulative and daily precip over growing season(double y axis bar graph)
@@ -19,6 +18,7 @@ install.packages("gridExtra")
 library(reshape)
 library(gridExtra)
 library(ggplot2)
+library(tidyverse)
 
 #Daily and Cumulative Precip
 #------------------------------------------------------------------------------------#
@@ -160,7 +160,7 @@ for (site in 1 : as.numeric(length(sites_list))) {
     #calculate averages from each treatment, convert data to long.
     analyte_frame  <- analyte_frame %>%
       group_by(Treatment) %>%
-      summarise_at(vars("B1", "B2", "B3","B4"), list(mean)) %>%
+      #summarise_at(vars("B1", "B2", "B3","B4"), list(mean)) %>%
       pivot_longer(cols = c("B1", "B2", "B3","B4"),
                    names_to = "Burial",
                    values_to = paste0(analyte))
@@ -277,7 +277,9 @@ for (site in 1 : as.numeric(length(sites_list))) {
 
 #Yield by treatment
 #------------------------------------------------------------------------------------#
-#make index with varible for labeling and sorting
+#make index with various arrays for labeling and sorting
+#due to missed treatments, arrays always in order --> list(Rosemount,
+#                                                          Waseca)
 Trt_Index <- list(Groups = list(c("Liquid","Liquid","Liquid","Solid","Solid","Solid","Control","Urea","Urea","Urea","Urea"),
                                 c("Liquid","Liquid","Liquid","Liquid","Solid","Solid","Solid","Control","Urea","Urea","Urea","Urea")),
                  Arrange = list(c(8,11,12,9,10,3,1,4,7,5,6),
@@ -287,7 +289,8 @@ Trt_Index <- list(Groups = list(c("Liquid","Liquid","Liquid","Solid","Solid","So
                  Names =  list(c("Liquid Dairy Early Fall","Liquid Dairy Spring","Liquid Dairy Sidedress","Solid Beef Early Fall","Solid Beef Late Fall",
                                 "Solid Beef Spring","Control","Urea 98lbsN","Urea 146lbsN","Urea 195lbsN","Urea 293lbsN"),
                                c("Liquid Swine Early Fall","Liquid Swine Late Fall","Liquid Swine Spring","Liquid Swine Sidedress","Solid Turkey Early Fall","Solid Turkey Late Fall",
-                                "Solid Turkey Spring","Control","Urea 75lbsN","Urea 112lbsN","Urea 150lbsN","Urea 225lbsN")),
+                                "Solid Turkey Spring","Control","Urea 75lbsN","Urea 112lbsN","Urea 150lbsN","Urea 225lbsN"),
+                               "Control"),
                  Yield_Types = list("Grain_Yield_Bu.acre",
                                     "Silage_Yield_65Percent_Moisture_Ton.acre",
                                     "Grain_Yield_Bu.acre"),
@@ -296,7 +299,15 @@ Trt_Index <- list(Groups = list(c("Liquid","Liquid","Liquid","Solid","Solid","So
                                  "Grain Yield(Bu/Acre)"),
                  Titles = list("Grain Yield",
                                "Silage Yield",
-                               "Grain Yield")
+                               "Grain Yield"),
+                 Sample_Timings = list("In Season(V4)",
+                                       "Post Harvest",
+                                       "Pre-Plant"),
+                 Sample_Depths = list('0-12in',
+                                      '12-24in',
+                                      '24-36in'),
+                 Sites = list("Rosemount",
+                              "Waseca")
                  )
 
 #make list of all raw harvest data
@@ -357,9 +368,73 @@ for (yields in as.numeric(1 : length(yield_list))) {
 #------------------------------------------------------------------------------------#
 
 
-#Soil N by treatment and over time
+#Soil N by treatment
 #------------------------------------------------------------------------------------#
+#pull data from masterlist
+soilN_list <- list(Growing_Season_2025$`2025 Rosemount Soil N`,
+                   Growing_Season_2025$`2025 Waseca Soil N`)
 
+#loop for site
+for (site in 1 : length(soilN_list)) {
 
+  soil_split <- soilN_list[[site]] %>%
+    group_split(Timing)
 
+  #loop for timings(-1 to exclude pre-plant timing)
+  for (samp in 1 : (length(soil_split) - 1) ) {
 
+    depth_split <- soil_split[[samp]] %>%
+      group_split(Depth.in.)
+
+    #loop for depth
+    for (depth in 1 :length(depth_split)) {
+
+      #make tibble for each plot
+      AvgN <- depth_split[[depth]] %>%
+        group_by(Treatment) %>%
+        summarise_at(vars("Ch1_NO3.Primary_540nm","Ch3_NH4.Primary_670nm"), list(Avg = mean)) %>%
+        mutate(across(Treatment, as.numeric),) %>%
+        arrange(Treatment) %>%
+        mutate(Trt = Trt_Index$Names[[site]],
+               Timing = Trt_Index$Sample_Timings[[samp]]) %>%
+        rename("NO3" = Ch1_NO3.Primary_540nm_Avg,
+                "NH4" = Ch3_NH4.Primary_670nm_Avg) %>%
+        pivot_longer(cols = c("NO3","NH4"),
+                     names_to = "N Type",
+                     values_to = "N Concentration") %>%
+        mutate(Trt = fct_inorder(Trt))
+
+      #set y limits for each sampling
+      y_limits <- c(16,5)
+
+      #make plots
+      AvgN_plot <- ggplot(AvgN,
+                         aes(fill = `N Type`,
+                             x = Trt,
+                             y = `N Concentration`)) +
+                          geom_bar(color = "black", position = position_stack(reverse = TRUE), stat = "identity") +
+                          scale_fill_manual(values = c("NO3" = "#ffcc33", "NH4" = "#7a0019")) +
+                          scale_x_discrete(labels = Trt_Index$Names[[site]], guide = guide_axis(n.dodge = 2)) +
+                          ggtitle(paste0(Trt_Index$Sites[[site]]," ",Trt_Index$Sample_Timings[[samp]], " Soil N by Treatment ", Trt_Index$Sample_Depths[[depth]])) +
+                          ylab("Soil N(PPM)") +
+                          xlab("Treatment") +
+                          ylim(c(-1,y_limits[[samp]])) +
+                          theme_bw() +
+                          theme(panel.grid.major.x = element_blank(),
+                                panel.grid.minor.x = element_blank()) +
+                          theme(axis.text = element_text(size = 12)) +
+                          theme(legend.text = element_text(size = 14)) +
+                          theme(axis.title = element_text(size = 16)) +
+                          theme(plot.title = element_text(size = 18)) +
+                          theme(legend.position = c(0.1, 0.85)) + # Places legend in the bottom-right
+                          theme(legend.background = element_rect(color = "black", fill = "white", linetype = "solid"))
+
+      #save plots
+      setwd("G:/Shared drives/ManureLabTeam/ManureResearch_Shared/Experiments/Timing/Data/r_Plots/SoilN")
+      ggsave(paste0(Trt_Index$Sites[[site]]," ",Trt_Index$Sample_Timings[[samp]]," Soil ", Trt_Index$Sample_Depths[[depth]],".png"),AvgN_plot, scale = 2)
+
+    }
+
+  }
+
+}
