@@ -26,5 +26,9 @@ Waseca_NVDI_NDRE <- Waseca_Data[[1]]
 #append NDVI_NDRE data to master datalist
 Growing_Season_2025 <- append(Growing_Season_2025, list(Rosemount_NDVI_NDRE = Rosemount_NDVI_NDRE,
                                                         Waseca_NVDI_NDRE = Waseca_NVDI_NDRE))
+
+#print results
+print("Appended NVDI/NDRE Data to List")
+
 #remove  in-process variables
 rm(list = ls()[!ls() %in% c("Growing_Season_2025","ManureTiming_Loc","Analysis_Loc","Raw_Data_Loc","Plots_Loc","Scripts_Loc")])

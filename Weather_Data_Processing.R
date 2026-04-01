@@ -63,5 +63,8 @@ Growing_Season_2025 <- append(Growing_Season_2025, list(Rosemount_Weather_Daily_
                                                         Rosemount_Weather_Daily_2025 = Rosemount_Weather_Daily_2025,
                                                         Waseca_Weather_Daily_2025 = Waseca_Weather_Daily_2025))
 
+#print results
+print("Appended Weather Data to List")
+
 #remove in process variables, keep specified variables
 rm(list = ls()[!ls() %in% c("Growing_Season_2025","ManureTiming_Loc","Analysis_Loc","Raw_Data_Loc","Plots_Loc","Scripts_Loc")])

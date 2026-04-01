@@ -23,5 +23,8 @@ Waseca_R6 <- Waseca_Data[[1]]
 #append PRS data to master datalist
 Growing_Season_2025 <- append(Growing_Season_2025, list(`Rosemount_R6` = `Rosemount_R6`,`Rosemount_Silage` = `Rosemount_Silage`,`Waseca_R6` = `Waseca_R6`))
 
+#print results
+print("Appended Plant & Yield Data to List")
+
 #remove  in-process variables
 rm(list = ls()[!ls() %in% c("Growing_Season_2025","ManureTiming_Loc","Analysis_Loc","Raw_Data_Loc","Plots_Loc","Scripts_Loc")])
