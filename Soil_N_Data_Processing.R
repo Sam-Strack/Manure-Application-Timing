@@ -6,7 +6,6 @@
 #load necessary packages
 library(tidyverse)
 library(scales)
-library(dplyr)
 
 soilN <- list(Rosemount_Data = lapply((list.files(paste0(Raw_Data_Loc,"/SoilN"), pattern=".*Rosemount.*\\.csv$", full.names=TRUE)), read.csv),
               Waseca_Data = lapply((list.files(paste0(Raw_Data_Loc,"/SoilN"), pattern=".*Waseca.*\\.csv$", full.names=TRUE)), read.csv))
@@ -48,7 +47,8 @@ for (site in 1 : length(sites)) {
                                    Sample.Name %in% c(110,206,311,412) ~ "9",
                                    Sample.Name %in% c(104,209,302,411) ~ "10",
                                    Sample.Name %in% c(111,212,308,404) ~ "11",
-                                   Sample.Name %in% c(109,203,304,405) ~ "12"))
+                                   Sample.Name %in% c(109,203,304,405) ~ "12"),
+      mutate(across(Treatment, as.numeric)))
 
     #append tibbles to each other in long format
     soil_samp_combined <- bind_rows(soil_samp_combined,soil_samp)
@@ -60,9 +60,20 @@ for (site in 1 : length(sites)) {
 
 }
 
+#Special cases due to in season mistakes
+#Treatment 2 not applied at rroc, remove soil samples from treatment 2 plots.
+`2025 Rosemount Soil N` <- `2025 Rosemount Soil N` %>%
+  filter(!grepl("107|211|301|406",Sample.Name))
+
+#Accidentally applied treatments 7 & 11 to 403, didn't apply ant to 404. Remove soil samples from both plots.
+`2025 Waseca Soil N` <- `2025 Waseca Soil N` %>%
+  filter(!grepl("403|404", Sample.Name))
+
 #add final tibbles to master list for growing season
 Growing_Season_2025 <- append(Growing_Season_2025, list(`2025 Rosemount Soil N` = `2025 Rosemount Soil N`,
                                                         `2025 Waseca Soil N` = `2025 Waseca Soil N`))
+#print results
+print("Appended SoilN Data to List")
 
 #remove in process variables, keep specified variables
 rm(list = ls()[!ls() %in% c("Growing_Season_2025","ManureTiming_Loc","Analysis_Loc","Raw_Data_Loc","Plots_Loc","Scripts_Loc")])
