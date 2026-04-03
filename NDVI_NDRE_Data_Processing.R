@@ -1,6 +1,6 @@
 #Script for loading in and organizing remote sensing data from ManureTiming Experiment,
 #Written By: Sam Strack :)
-#Last Updated: 12/26/2025
+#Last Updated: 04/03/2026
 
 #load necessary packages
 library(tidyverse)
@@ -22,6 +22,15 @@ Waseca_Dates <- substr((basename(list.files(paste0(Raw_Data_Loc,"/NDVI_NDRE"), p
 #for
 Rosemount_NDVI_NDRE <- Rosemount_Data[[1]]
 Waseca_NVDI_NDRE <- Waseca_Data[[1]]
+
+#Special cases due to in season mistakes
+#Treatment 2 not applied at rroc, remove soil samples from treatment 2 plots.
+Rosemount_NDVI_NDRE <- Rosemount_NDVI_NDRE %>%
+  filter(!grepl("107|211|301|406",Plot))
+
+#Accidentally applied treatments 7 & 11 to 403, didn't apply ant to 404. Remove soil samples from both plots.
+Waseca_NVDI_NDRE <- Waseca_NVDI_NDRE %>%
+  filter(!grepl("403|404", Plot))
 
 #append NDVI_NDRE data to master datalist
 Growing_Season_2025 <- append(Growing_Season_2025, list(Rosemount_NDVI_NDRE = Rosemount_NDVI_NDRE,
