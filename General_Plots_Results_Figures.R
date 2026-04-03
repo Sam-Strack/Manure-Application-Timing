@@ -13,8 +13,8 @@
 #written by: Sam Strack :)
 #last edited: 03/17/2025
 
-install.packages("reshape")
-install.packages("gridExtra")
+#install.packages("reshape")
+#install.packages("gridExtra")
 library(reshape)
 library(gridExtra)
 library(ggplot2)
@@ -436,5 +436,61 @@ for (site in 1 : length(soilN_list)) {
     }
 
   }
+
+}
+
+#------------------------------------------------------------------------------------#
+
+
+#NDVI/NDRE by treatment
+#------------------------------------------------------------------------------------#
+
+#Reflectance list
+ref_list <- list(Growing_Season_2025$Rosemount_NDVI_NDRE,
+                 Growing_Season_2025$Waseca_NVDI_NDRE)
+
+#loop for site
+for (site in 1 : length(ref_list)) {
+
+  site_ref <- ref_list[[site]]
+  ref_indicies <- c("Avg_NDRE_HRow", "Avg_NDVI_HRow", "NSI_NDRE", "NSI_NDVI")
+
+  #take averages of all indicies
+  Avg_ref <- site_ref %>%
+    group_by(Treatment) %>%
+    summarise_at(vars(all_of(ref_indicies)),list(mean)) %>%
+    mutate(Trt_num = Trt_Index$Arrange[[site]]) %>%
+    arrange(Trt_num) %>%
+    mutate(Treatment = Trt_Index$Names[[site]],
+           Type = Trt_Index$Groups[[site]]) %>%
+    mutate(Treatment = fct_inorder(Treatment))
+
+   #loop for reflectance index
+   for (index in 1 : length(ref_indicies)) {
+
+     #make plots
+     AvgRef_plot <- ggplot(Avg_ref,
+                         aes(fill = Type,
+                             x = Treatment,
+                             y = Avg_ref[[ref_indicies[[index]]]] )) +
+                             geom_bar(color = "black", stat = "identity") +
+                             scale_fill_manual(values = c("Liquid" = "#ffcc33", "Solid" = "#7a0019", "Control" = "#141414", "Urea" = "#A9A9A9" )) +
+                             scale_x_discrete(labels = Trt_Index$Names[[site]], guide = guide_axis(n.dodge = 2)) +
+                             ggtitle(paste0(Trt_Index$Sites[[site]]," ",ref_indicies[[index]]," 08/26/2025")) +
+                             ylab(paste0(ref_indicies[[index]]," Value")) +
+                             xlab("Treatment") +
+                             ylim(c(0,1.1)) +
+                             theme_bw() +
+                             theme(panel.grid.major.x = element_blank(),
+                                   panel.grid.minor.x = element_blank()) +
+                             theme(axis.text = element_text(size = 10)) +
+                             theme(legend.text = element_text(size = 14)) +
+                             theme(axis.title = element_text(size = 16)) +
+                             theme(plot.title = element_text(size = 18))
+     #save plots
+     setwd("G:/Shared drives/ManureLabTeam/ManureResearch_Shared/Experiments/Timing/Data/r_Plots/NDVI_NDRE")
+     ggsave(paste0(Trt_Index$Sites[[site]]," ",ref_indicies[[index]],".png"),AvgRef_plot, scale = 2)
+
+   }
 
 }
