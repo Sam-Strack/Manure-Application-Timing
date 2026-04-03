@@ -25,12 +25,15 @@
 
 #------------------------------------------------------------------------------------#
 #Relevant file Locations
-ManureTiming_Loc <- "D:/Shared drives/ManureLabTeam/ManureResearch_Shared/Experiments/Timing/Data"
+ManureTiming_Loc <- "G:/Shared drives/ManureLabTeam/ManureResearch_Shared/Experiments/Timing/Data"
 
 Analysis_Loc <- paste0(ManureTiming_Loc,"/r_Analysis")
 Raw_Data_Loc <- paste0(ManureTiming_Loc,"/Raw_Data")
 Plots_Loc <- paste0(ManureTiming_Loc,"/r_Plots")
 Scripts_Loc <- paste0(ManureTiming_Loc,"/r_Scripts/Manure-Application-Timing/")
+
+#Initialize List
+Growing_Season_2025 <- list()
 
 #------------------------------------------------------------------------------------#
 #Data Processing
@@ -58,25 +61,31 @@ Scripts_Loc <- paste0(ManureTiming_Loc,"/r_Scripts/Manure-Application-Timing/")
 #------------------------------------------------------------------------------------#
 #Analysis
 
+#Create Treatment index for making plots
+source(paste0(Scripts_Loc,"/Treatment_Index.R"))
+Trt_index <- Treatment_index()
+
 #Two way ANOVA to test effect of manure timing, manure type, and manure timingXtype on all soil/plant variables and yield
   #https://statsandr.com/blog/two-way-anova-in-r/
 
-#Regression of Vegetation Indices vs Treatment/Plot
+#Regression of Vegetation Indices vs yield Plot
+  source(paste0(Scripts_Loc,"/Regression_Analysis.R"))
 
 #Look into stat tests Eduardo used for PRS x Treatment
 
 #N-yield response curve and EONR
-  #https://blogs.cornell.edu/agsci-interns/2015/08/20/the-models-used-to-fit-the-data-of-yield-nitrogen-fertilizer-response/
-
 
 #------------------------------------------------------------------------------------#
 #Plots
 
 #Treatment X Yield/Biomass
 
-#PRS Nutrients across time including Precip
-
 #General Plots, Pre Analysis:
+  #Daily/Cumulative Precip
+  #PRS Analytes
+  #Yield by treatment
+  #Soil N by treatment
+#  source(paste0(Scripts_Loc,"/General_Plots_Results_Figures.R")) <-- fix PRS
 
 
 
