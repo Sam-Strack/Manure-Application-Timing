@@ -20,6 +20,17 @@ Rosemount_R6 <- Rosemount_Data[[1]]
 Rosemount_Silage <- Rosemount_Data[[2]]
 Waseca_R6 <- Waseca_Data[[1]]
 
+#Special cases due to in season mistakes
+#Treatment 2 not applied at rroc, remove soil samples from treatment 2 plots.
+Rosemount_R6 <- Rosemount_R6 %>%
+  filter(!grepl("107|211|301|406",Plot))
+Rosemount_Silage <- Rosemount_Silage %>%
+  filter(!grepl("107|211|301|406",Plot))
+
+#Accidentally applied treatments 7 & 11 to 403, didn't apply ant to 404. Remove soil samples from both plots.
+Waseca_R6 <- Waseca_R6 %>%
+  filter(!grepl("403|404", Plot))
+
 #append PRS data to master datalist
 Growing_Season_2025 <- append(Growing_Season_2025, list(`Rosemount_R6` = `Rosemount_R6`,`Rosemount_Silage` = `Rosemount_Silage`,`Waseca_R6` = `Waseca_R6`))
 
